@@ -28,6 +28,7 @@ namespace Simon
         bool canclick = true;
         int level = 1;
         Turn turn = Turn.COMPUTER;
+       
 
         List<SimonColors> moves, player; // Hint
         int PlayBackIndex = 0;  // Index into moves list
@@ -125,17 +126,14 @@ namespace Simon
                     Lit = moves[PlayBackIndex];
                     PlayBackIndex++;
                 }
-                turn = Turn.PLAYBACK;
                 PlayBackIndex = 0;
-                
-
                 turn = Turn.PLAYBACK;
             }
             //TODO: After 1 second add a random move
 
             else if (turn == Turn.PLAYBACK)
             {
-                
+                Lit = SimonColors.NONE;
                 while(PlayBackIndex < moves.Count)
                 {    
                     Lit = moves[PlayBackIndex];
@@ -182,7 +180,7 @@ namespace Simon
 
                     if (Lit != SimonColors.NONE)
                     {
-                        player[PlayerTurnIndex] = Lit;
+                        Lit = player[PlayerTurnIndex];
                         while (PlayerTurnIndex < (player.Count - 1))
                         {
                             PlayerTurnIndex++;
@@ -198,7 +196,8 @@ namespace Simon
 
                     if (Lit != SimonColors.NONE)
                     {
-                        if (Lit == moves[PlayBackIndex-1])
+
+                        if (Lit == moves[PlayerTurnIndex])
                         {
 
                             
