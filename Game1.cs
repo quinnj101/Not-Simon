@@ -25,9 +25,8 @@ namespace Simon
         Texture2D simon;
         Texture2D cursor;
         Random rand;
-        int timer = 0;
         bool canclick = true;
-        int level;
+        int level = 1;
         Turn turn = Turn.COMPUTER;
 
         List<SimonColors> moves, player; // Hint
@@ -116,11 +115,20 @@ namespace Simon
                 }
                  */
                 
-                moves.Add((SimonColors)rand.Next(0, 4));
+
+                while (moves.Count <= level) 
+                {
+                    
+                    moves.Add((SimonColors)rand.Next(0, 4));
+
+                     
+                    Lit = moves[PlayBackIndex];
+                    PlayBackIndex++;
+                }
                 turn = Turn.PLAYBACK;
                 PlayBackIndex = 0;
-                timer = 0;
- 
+                
+
                 turn = Turn.PLAYBACK;
             }
             //TODO: After 1 second add a random move
@@ -172,12 +180,15 @@ namespace Simon
                         player.Add(SimonColors.BLUE);
                     }
 
-                    player[PlayerTurnIndex] = Lit;
-                    while (PlayerTurnIndex < (player.Count - 1) )
+                    if (Lit != SimonColors.NONE)
                     {
-                        PlayerTurnIndex++;
+                        player[PlayerTurnIndex] = Lit;
+                        while (PlayerTurnIndex < (player.Count - 1))
+                        {
+                            PlayerTurnIndex++;
+                        }
                     }
-
+                   
                     
 
                    
@@ -187,7 +198,7 @@ namespace Simon
 
                     if (Lit != SimonColors.NONE)
                     {
-                        if (player[PlayerTurnIndex] == moves[PlayBackIndex-1])
+                        if (Lit == moves[PlayBackIndex-1])
                         {
 
                             
@@ -200,6 +211,10 @@ namespace Simon
                                 moves.Clear();
                                 PlayBackIndex = 0;
                                 turn = Turn.COMPUTER;
+                            }
+                            else
+                            {
+                                turn = Turn.GAMEOVER;
                             }
  
 
