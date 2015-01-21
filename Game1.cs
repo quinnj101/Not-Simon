@@ -8,6 +8,10 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using System;
+using System.Collections.Generic;
+using System.Timers;
+
 
 namespace Simon
 {
@@ -27,14 +31,17 @@ namespace Simon
         Random rand;
         bool canclick = true;
         int level = 1;
+        int a;
         Turn turn = Turn.COMPUTER;
-       
+        Timer t = new Timer(750);
 
         List<SimonColors> moves, player; // Hint
         int PlayBackIndex = 0;  // Index into moves list
         int PlayerTurnIndex = 0; // When it's the player's turn, you can use this to store what move the player is on
 
         SimonColors Lit = SimonColors.NONE;  // Which button is currently lit up?
+        
+        
 
         public Game1()
         {
@@ -101,6 +108,7 @@ namespace Simon
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
+            
 
             // TODO: Add your update logic here
 
@@ -115,16 +123,16 @@ namespace Simon
                     }
                 }
                  */
-                
 
+          
                 while (moves.Count <= level) 
                 {
                     
                     moves.Add((SimonColors)rand.Next(0, 4));
-
-                     
                     Lit = moves[PlayBackIndex];
                     PlayBackIndex++;
+                        
+                    
                 }
                 PlayBackIndex = 0;
                 turn = Turn.PLAYBACK;
@@ -135,9 +143,12 @@ namespace Simon
             {
                 Lit = SimonColors.NONE;
                 while(PlayBackIndex < moves.Count)
-                {    
-                    Lit = moves[PlayBackIndex];
-                    PlayBackIndex++;
+                {
+                   
+                        Lit = moves[PlayBackIndex];
+                        
+                        PlayBackIndex++;
+                        
                 }
                 // TODO: Play one move every 750ms.. 
                 // DO NOT PLAY BACK ALL MOVES AT ONCE
@@ -178,6 +189,8 @@ namespace Simon
                         player.Add(SimonColors.BLUE);
                     }
 
+                  
+
                     if (Lit != SimonColors.NONE)
                     {
                         Lit = player[PlayerTurnIndex];
@@ -186,9 +199,12 @@ namespace Simon
                             PlayerTurnIndex++;
                         }
                     }
-                   
-                    
 
+
+                    if (PlayerTurnIndex > moves.Count)
+                    {
+                        turn = Turn.GAMEOVER;
+                    }
                    
 
                     // Check to see if green button is hit.. add code to make sure the mouse button is depressed so you
@@ -237,12 +253,17 @@ namespace Simon
                 SoundManager.PlayGameOver();
 
                 moves.Clear();
+                player.Clear();
+                PlayerTurnIndex = 0;
+                moves.Clear();
+                PlayBackIndex = 0;
                 turn = Turn.COMPUTER;
                 Lit = SimonColors.NONE;
             }
 
             base.Update(gameTime);
         }
+
 
         // point is the on-screen mouse coordinate where a click occurred
         // destination is a rectangle where this sprite will be drawn
@@ -278,26 +299,28 @@ namespace Simon
             }
 
             // RED
-            if (isPressed(simon, new Rectangle(46 + 277, 40, 238, 243), new Rectangle(277, 0, 238, 243)))
+            else if (isPressed(simon, new Rectangle(46 + 277, 40, 238, 243), new Rectangle(277, 0, 238, 243)))
             {
                 return SimonColors.RED;
             }
 
 
             // YELLOW
-            if (isPressed(simon, new Rectangle(46, 40 + 276, 238, 243), new Rectangle(0, 276, 238, 243)))
+            else if (isPressed(simon, new Rectangle(46, 40 + 276, 238, 243), new Rectangle(0, 276, 238, 243)))
             {
                 return SimonColors.YELLOW;
             }
 
 
             // BLUE
-            if (isPressed(simon, new Rectangle(46 + 277, 40 + 276, 238, 243), new Rectangle(277, 276, 238, 243)))
+            else if (isPressed(simon, new Rectangle(46 + 277, 40 + 276, 238, 243), new Rectangle(277, 276, 238, 243)))
             {
                 return SimonColors.BLUE;
             }
-
+            else
+            {
             return SimonColors.NONE;
+            }
         }
 
         /// <summary>
@@ -341,4 +364,5 @@ namespace Simon
             base.Draw(gameTime);
         }
     }
+   
 }
